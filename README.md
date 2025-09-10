@@ -20,7 +20,7 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
 - `PedestrianController.cs`
   - NavMeshAgentを用いた歩行者の移動・速度の制御
 - `LineObject.cs`
-  - Start/Intermediate/Goalの各ラインを表し、生成範囲と経路区切りを定義
+  - Start/Intermediate/Goalの各ラインを表し、生成範囲と経路を定義
 
 
 ## クイックスタート
@@ -33,7 +33,11 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
    - 並び順は「スタートライン → 中間ライン（複数） → ゴールライン」
    - ※ 中間ラインが2つ未満だと歩行者は生成されません
 2. **歩行者プレハブを準備**
-   - `PedestrianController.cs`、`NavMeshAgent`、`Rigidbody`、`Collider` をアタッチ
+   - 以下をアタッチ
+     - `PedestrianController.cs`
+     - `NavMeshAgent`
+     - `Rigidbody`
+     - `Collider`
    - `PedestrianController.cs`の以下のパラメータを設定
      - `minSpeed`：最小速度
      - `maxSpeed`：最大速度
