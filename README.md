@@ -32,7 +32,7 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
    - スタート/ゴールを各1つ、中間ラインを2つ以上
    - 並び順は「スタートライン → 中間ライン（複数） → ゴールライン」
    - ※ 中間ラインが2つ未満だと歩行者は生成されません
-2. **歩行者プレハブを準備**
+2. **歩行者Prefabを準備**
    - 以下をアタッチ
      - `PedestrianController.cs`
      - `NavMeshAgent`
@@ -49,7 +49,7 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
      - `frontierStart`, `frontierGoal`：両端のライン(スタート・ゴールライン)
      - `intermediateLines`：中間ラインのリスト（2つ以上）
        - ※ スタートライン側 -> ゴールライン側 の順でリストに登録してください
-     - `pedestrianPrefab`：歩行者の Prefab
+     - `pedestrianPrefab`：歩行者Prefab
      - `S2GPedestrianCount` / `G2SPedestrianCount`：各方向の生成人数
      - `ratioStationary`：停止者の生成確率（%）
      - `ratioReversing`：逆走者の生成確率（%）
