@@ -81,8 +81,8 @@ public override void OnEpisodeBegin()
 
 パラメータのランダム化例:
 ```csharp
-manager.S2GPedestrianCount = Random.Range(5, 15);
-manager.G2SPedestrianCount = Random.Range(5, 15);
+manager.S2GPedestrianCount = (int)Random.Range(5, 15);
+manager.G2SPedestrianCount = (int)Random.Range(5, 15);
 manager.IsLeftSideTraffic = Random.value > 0.5f;
 manager.Regenerate();
 ```
