@@ -20,19 +20,24 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
 - `PedestrianController.cs`
   - NavMeshAgentを用いた歩行者の移動・速度の制御
 - `LineObject.cs`
-  - Start/Intermediate/Goalの各ラインを表し、生成範囲と経路区切りを定義
+  - Start/Intermediate/Goalの各ラインを表し、生成範囲と経路を定義
 
 
 ## クイックスタート
 
 1. **ラインを配置**
    - ここで言う「ライン」とは以下をアタッチしたCubeオブジェクトです
-     - `LineObject.cs`、`Box Collider(Is Trigger)`
+     - `LineObject.cs`
+     - `Box Collider(Is Trigger)`
    - スタート/ゴールを各1つ、中間ラインを2つ以上
    - 並び順は「スタートライン → 中間ライン（複数） → ゴールライン」
    - ※ 中間ラインが2つ未満だと歩行者は生成されません
-2. **歩行者プレハブを準備**
-   - `PedestrianController.cs`、`NavMeshAgent`、`Rigidbody`、`Collider` をアタッチ
+2. **歩行者Prefabを準備**
+   - 以下をアタッチ
+     - `PedestrianController.cs`
+     - `NavMeshAgent`
+     - `Rigidbody`
+     - `Collider`
    - `PedestrianController.cs`の以下のパラメータを設定
      - `minSpeed`：最小速度
      - `maxSpeed`：最大速度
@@ -44,7 +49,7 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
      - `frontierStart`, `frontierGoal`：両端のライン(スタート・ゴールライン)
      - `intermediateLines`：中間ラインのリスト（2つ以上）
        - ※ スタートライン側 -> ゴールライン側 の順でリストに登録してください
-     - `pedestrianPrefab`：歩行者の Prefab
+     - `pedestrianPrefab`：歩行者Prefab
      - `S2GPedestrianCount` / `G2SPedestrianCount`：各方向の生成人数
      - `ratioStationary`：停止者の生成確率（%）
      - `ratioReversing`：逆走者の生成確率（%）
@@ -62,7 +67,7 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
 
 ## ML-Agents との連携
 
-エージェントスクリプトで毎エピソード開始時にパラメータをランダム化し、再生成すると強化学習に利用可能。
+毎エピソード開始時にパラメータランダム化→再生成する事で強化学習で動的に利用可能。
 
 歩行者流の再生成:
 ```csharp
@@ -76,8 +81,8 @@ public override void OnEpisodeBegin()
 
 パラメータのランダム化例:
 ```csharp
-manager.S2GPedestrianCount = Random.Range(5, 15);
-manager.G2SPedestrianCount = Random.Range(5, 15);
+manager.S2GPedestrianCount = (int)Random.Range(5, 15);
+manager.G2SPedestrianCount = (int)Random.Range(5, 15);
 manager.IsLeftSideTraffic = Random.value > 0.5f;
 manager.Regenerate();
 ```
