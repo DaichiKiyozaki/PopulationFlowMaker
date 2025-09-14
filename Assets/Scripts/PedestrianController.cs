@@ -41,10 +41,10 @@ public class PedestrianController : MonoBehaviour
     private float lateralRatio = 0.5f;
 
     // セグメントの「開始側」ラインのインデックス（0～intermediateLines.Count）。
-    // 実際に目指すターゲットラインは、orderedLines[currentTargetLineIndex + 1]。
+    // 実際に目指すターゲットラインは、orderedLines[currentSegmentIndex + 1]。
     // - S2Gの場合: 0 → 目指すのは最初の中間ライン、intermediateLines.Count → 目指すのはゴールライン
     // - G2Sの場合: 0 → 目指すのは最後の中間ライン、intermediateLines.Count → 目指すのはスタートライン
-    private int currentTargetLineIndex = 0;
+    private int currentSegmentIndex = 0;
 
     // 1サイクル（生成/リセット〜最終到達）間で再利用する、進行方向順のライン列
     private List<LineObject> orderedLines;
@@ -68,7 +68,7 @@ public class PedestrianController : MonoBehaviour
         if (frontierStart == null || frontierGoal == null) return;
 
         // 中間ライン追跡状態をリセット
-        currentTargetLineIndex = 0;
+    currentSegmentIndex = 0;
 
         // サイクル用ライン列を構築
         orderedLines = GetAllLinesOrdered(isS2G);
@@ -114,7 +114,7 @@ public class PedestrianController : MonoBehaviour
         if (shouldReset)
         {
             // 到達後はセグメント進行を初期化して循環
-            currentTargetLineIndex = 0;
+            currentSegmentIndex = 0;
             ResetPosition();
             return;
         }
@@ -126,7 +126,7 @@ public class PedestrianController : MonoBehaviour
             if (currentTarget != null && other.gameObject == currentTarget.gameObject)
             {
                 // 次のターゲットへ進め、目的地を更新
-                currentTargetLineIndex++;
+                currentSegmentIndex++;
                 SetDestination();
                 return;
             }
@@ -237,7 +237,7 @@ public class PedestrianController : MonoBehaviour
         Vector3 position = SnapToNavMeshXZ(spawnPos);
 
         // 現在のターゲットセグメントを保持（source=segIndex, target=segIndex+1）
-        currentTargetLineIndex = segIndex;
+        currentSegmentIndex = segIndex;
 
         // 初期の目的地は p1（dst対応点）を使用
         return (position, p1);
@@ -303,7 +303,7 @@ public class PedestrianController : MonoBehaviour
         if (lines == null || lines.Count == 0) return null;
 
         // 範囲外アクセスを防ぐためにClamp
-        int idx = Mathf.Clamp(currentTargetLineIndex + 1, 1, Mathf.Max(1, lines.Count - 1));
+    int idx = Mathf.Clamp(currentSegmentIndex + 1, 1, Mathf.Max(1, lines.Count - 1));
         return lines[idx];
     }
     #endregion
