@@ -40,10 +40,11 @@ public class PedestrianController : MonoBehaviour
     // サイクル（生成〜到達）中に維持する横方向の割合（0..1）
     private float lateralRatio = 0.5f;
 
-    // 中間ライン制御
-    private int currentTargetLineIndex = 0; // 次に目指すラインのインデックス（0～intermediateLines.Count）
-    // - S2Gの場合: 0は最初の中間ライン（中間ライン無し時はゴールライン）、intermediateLines.Countはゴールライン
-    // - G2Sの場合: 0は最初の目的ライン（ゴールライン）、intermediateLines.Countはスタートライン
+    // セグメントの「開始側」ラインのインデックス（0～intermediateLines.Count）。
+    // 実際に目指すターゲットラインは、orderedLines[currentTargetLineIndex + 1]。
+    // - S2Gの場合: 0 → 目指すのは最初の中間ライン、intermediateLines.Count → 目指すのはゴールライン
+    // - G2Sの場合: 0 → 目指すのは最後の中間ライン、intermediateLines.Count → 目指すのはスタートライン
+    private int currentTargetLineIndex = 0;
 
     // 1サイクル（生成/リセット〜最終到達）間で再利用する、進行方向順のライン列
     private List<LineObject> orderedLines;
@@ -55,7 +56,6 @@ public class PedestrianController : MonoBehaviour
     #region Unity Lifecycle
     private void Awake()
     {
-        // 頻繁にアクセスするコンポーネント参照をキャッシュして、GetComponentの頻度を下げる
         navMeshAgent = GetComponent<NavMeshAgent>();
         cachedAnimator = GetComponent<Animator>();
     }
@@ -67,7 +67,7 @@ public class PedestrianController : MonoBehaviour
     {
         if (frontierStart == null || frontierGoal == null) return;
 
-        // 中間ライン追跡状態をリセット（最初のセグメントから再開）
+        // 中間ライン追跡状態をリセット
         currentTargetLineIndex = 0;
 
         // サイクル用ライン列を構築
@@ -202,7 +202,7 @@ public class PedestrianController : MonoBehaviour
         // 初期化されていなければライン列を構築
         var lines = orderedLines ?? (orderedLines = GetAllLinesOrdered(isS2G));
 
-        // 初期セグメントの選定：両端(Start/Goal)を避け、中間セグメントを優先
+        // 初期セグメントを選択：基本両端のセグメントには生成しないようにする。
         int minSegIndex = 1;
         int maxSegIndex = lines.Count - 2;
         int segIndex;
@@ -220,11 +220,11 @@ public class PedestrianController : MonoBehaviour
         LineObject src = lines[segIndex];
         LineObject dst = lines[segIndex + 1];
 
-        // Lerpベースに統一：進行方向に対する左右とラインの Left/Right の関係から横割合を決定
+        // 進行方向に対する左右とラインの Left/Right の関係から横割合を決定
         bool useLeft = ShouldUseLeftSide(isLeftSideTraffic);
         lateralRatio = ChooseLateralRatioForSegment(src, dst, useLeft);
 
-        // 決定した割合で source ライン上の対応点を取得（Lerp）
+        // 決定した割合で source ライン上の対応点を取得
         Vector3 p0 = Vector3.Lerp(src.LeftPoint, src.RightPoint, lateralRatio);
 
         // 次ライン上では同じ割合の点を目的地にする
@@ -264,7 +264,7 @@ public class PedestrianController : MonoBehaviour
                 : frontierStart;
         }
 
-        // Lerpベースに統一：進行方向に対する左右とラインの Left/Right の関係から横割合を決定
+        // 進行方向に対する左右とラインの Left/Right の関係から横割合を決定
         bool useLeft = ShouldUseLeftSide(populationFlowManager.IsLeftSideTraffic);
         lateralRatio = ChooseLateralRatioForSegment(sourceLine, targetLine, useLeft);
 
@@ -345,9 +345,8 @@ public class PedestrianController : MonoBehaviour
     }
 
     /// <summary>
-    /// 指定セグメント（source→target）の進行方向に対し、歩行レーンの左半/右半から
-    /// lateral ratio（0..1）を選ぶ。LineObject.Left/Right と幾何学的な左/右は一致しない
-    /// 可能性があるため、毎回「進行方向の左ベクトル」に対して LeftPoint が左側かを判定する。
+    /// 指定セグメント（source→target）の進行方向に対し、歩行レーンの左半/右半からlateral ratio（0..1）を選ぶ。
+    /// LineObject.Left/Right と幾何学的な左/右は一致しない可能性があるため、毎回「進行方向の左ベクトル」に対して LeftPoint が左側かを判定する。
     /// </summary>
     private float ChooseLateralRatioForSegment(LineObject source, LineObject target, bool useLeft)
     {
