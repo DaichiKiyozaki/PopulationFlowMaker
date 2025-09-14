@@ -106,7 +106,7 @@ public class PopulationFlowManager : MonoBehaviour
     // PedestrianControllerの共通設定
     private void SetupPedestrianController(PedestrianController controller, bool isS2G)
     {
-        controller.PopulationFlowManager = this;
+        controller.populationFlowManager = this;
         controller.frontierStart = frontierStart;
         controller.frontierGoal = frontierGoal;
         controller.intermediateLines = intermediateLines;
