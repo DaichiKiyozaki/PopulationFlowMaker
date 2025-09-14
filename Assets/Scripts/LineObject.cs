@@ -114,9 +114,14 @@ public class LineObject : MonoBehaviour
         // 未初期化（両端点がゼロ）の場合は描画しない
         if (LeftPoint == Vector3.zero && RightPoint == Vector3.zero) return;
 
+        // 線分は緑、端点は Left=青, Right=赤 で表示
         Gizmos.color = Color.green;
         Gizmos.DrawLine(LeftPoint, RightPoint);
+
+        Gizmos.color = Color.blue;   // 左端点
         Gizmos.DrawSphere(LeftPoint, 0.1f);
+
+        Gizmos.color = Color.red;  // 右端点
         Gizmos.DrawSphere(RightPoint, 0.1f);
     }
 }

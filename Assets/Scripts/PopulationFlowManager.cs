@@ -34,10 +34,10 @@ public class PopulationFlowManager : MonoBehaviour
     [Header("Special Pedestrian Settings")]
     [Tooltip("停止者の生成確率（%）")]
     [Range(0, 100)]
-    [SerializeField] private int ratioStationary = 10;
+    public int RatioStationary = 10;
     [Tooltip("逆走者の生成確率（%）")]
     [Range(0, 100)]
-    [SerializeField] private int ratioReversing = 10;
+    public int RatioReversing = 10;
 
     // 歩行者リスト
     private List<PedestrianController> start2GoalPedestrians = new List<PedestrianController>();
@@ -175,13 +175,13 @@ public class PopulationFlowManager : MonoBehaviour
         pedestrian.isStationaryPedestrian = false;
 
         // 逆走者を独立して設定
-        bool isReverse = Random.Range(0, 100) < ratioReversing;
+        bool isReverse = Random.Range(0, 100) < RatioReversing;
         pedestrian.isReversePedestrian = isReverse;
 
         // 停止者は逆走者以外から設定
         if (!pedestrian.isReversePedestrian)
         {
-            pedestrian.isStationaryPedestrian = Random.Range(0, 100) < ratioStationary;
+            pedestrian.isStationaryPedestrian = Random.Range(0, 100) < RatioStationary;
         }
     }
 

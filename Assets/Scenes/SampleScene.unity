@@ -173,8 +173,8 @@ MonoBehaviour:
   pedestrianPrefab: {fileID: 802560460005980580, guid: 49fcbaa91a57fc641ae87a8452e6bdee, type: 3}
   S2GPedestrianCount: 7
   G2SPedestrianCount: 7
-  ratioStationary: 8
-  ratioReversing: 4
+  RatioStationary: 10
+  RatioReversing: 10
 --- !u!1001 &200762909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1280,7 +1280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.46
+      value: -13
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1432,8 +1432,8 @@ MonoBehaviour:
   pedestrianPrefab: {fileID: 802560460005980580, guid: 49fcbaa91a57fc641ae87a8452e6bdee, type: 3}
   S2GPedestrianCount: 7
   G2SPedestrianCount: 7
-  ratioStationary: 8
-  ratioReversing: 4
+  RatioStationary: 10
+  RatioReversing: 10
 --- !u!1 &1016363330
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,7 +1865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.7
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2020,7 +2020,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.3
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2136,8 +2136,8 @@ MonoBehaviour:
   pedestrianPrefab: {fileID: 802560460005980580, guid: 49fcbaa91a57fc641ae87a8452e6bdee, type: 3}
   S2GPedestrianCount: 7
   G2SPedestrianCount: 7
-  ratioStationary: 8
-  ratioReversing: 4
+  RatioStationary: 10
+  RatioReversing: 10
 --- !u!1 &1508289106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2233,8 +2233,8 @@ MonoBehaviour:
   pedestrianPrefab: {fileID: 802560460005980580, guid: 49fcbaa91a57fc641ae87a8452e6bdee, type: 3}
   S2GPedestrianCount: 7
   G2SPedestrianCount: 7
-  ratioStationary: 8
-  ratioReversing: 4
+  RatioStationary: 10
+  RatioReversing: 10
 --- !u!1001 &1608853070
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2559,7 +2559,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3485273074331905581, guid: 012b9b668fac10440867782695d8432a, type: 3}
       propertyPath: m_LocalPosition.y
