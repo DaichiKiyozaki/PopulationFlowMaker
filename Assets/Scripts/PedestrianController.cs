@@ -30,13 +30,19 @@ public class PedestrianController : MonoBehaviour
     [SerializeField] private float minSpeed = 0.5f;
     [SerializeField] private float maxSpeed = 3.0f;
 
+    // 身長スケール設定（1.0が基準）
+    [Header("身長スケール設定")]
+    [SerializeField] private float MinHeightScale = 0.85f;
+    [SerializeField] private float MaxHeightScale = 1.15f;
+
     // y座標の補正設定
-    [SerializeField] private float navMeshSnapMaxDistance = 2.0f; // 近傍NavMeshへスナップする最大距離（YはNavMesh/Agentで自動管理）
+    private float navMeshSnapMaxDistance = 2.0f; // 近傍NavMeshへスナップする最大距離（YはNavMesh/Agentで自動管理）
 
     // 移動制御
     private NavMeshAgent navMeshAgent;
     private Vector3 destination;
     private Animator cachedAnimator;
+    private Vector3 originalScale; // プレハブの元のスケールを保持
     // サイクル（生成〜到達）中に維持する横方向の割合（0..1）
     private float lateralRatio = 0.5f;
 
@@ -58,6 +64,7 @@ public class PedestrianController : MonoBehaviour
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         cachedAnimator = GetComponent<Animator>();
+        originalScale = transform.localScale; // 元のスケールを保持
     }
     #endregion
 
@@ -378,6 +385,10 @@ public class PedestrianController : MonoBehaviour
     // NavMeshパラメータをランダムに適用
     private void ApplyRandomMovementParams()
     {
+        // 身長スケールをランダムに適用（元のスケールを基準に乗算）
+        float heightScale = Random.Range(MinHeightScale, MaxHeightScale);
+        transform.localScale = originalScale * heightScale;
+
         // 停止者は速度0/停止。移動者は速度と回避優先度にランダム性を付与
         if (isStationaryPedestrian)
         {
