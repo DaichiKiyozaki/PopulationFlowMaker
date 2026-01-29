@@ -1,85 +1,155 @@
 # PopulationFlowMaker
 
-Unityで（右側通行・左側通行等の）歩行者流を生成する簡易ツール。<br>
-強化学習等で歩行者流を用意したい場合に利用できます。
+Unityで（右側通行・左側通行等の）歩行者流を生成する簡易ツールです。強化学習（ML-Agents）などで「毎エピソード歩行者流を用意したい」用途を想定しています。
 
 
-![demo1](image/image1.png)
-![demo2](image/image2.png)
+<p align="center">
+  <img src="image/image.png" alt="demo" width="800" />
+</p>
 
+<p align="center">
+  <img src="image/image2.png" alt="demo2" width="800" />
+</p>
+
+## 目次
+
+- [開発環境](#開発環境)
+- [できること](#できること)
+- [主要コンポーネント](#主要コンポーネント)
+- [クイックスタート](#クイックスタート)
+- [設定項目（Inspector）](#設定項目inspector)
+- [仕様・注意点](#仕様注意点)
+- [ML-Agents との連携](#ml-agents-との連携)
 
 ## 開発環境
 
-- Unity 2023.2.8f1
+| 項目 | 値 |
+| --- | --- |
+| Unity | 2023.2.8f1 |
 
+## できること
 
-## コンポーネント(Assets/Scripts直下)
+| 機能 | 概要 |
+| --- | --- |
+| 2方向の歩行者生成 | Start→Goal / Goal→Start の人数を別々に設定 |
+| 左側/右側通行の切替 | `IsLeftSideTraffic` で切替（false=右側通行） |
+| 停止者・逆走者の混在 | 確率（%）で停止/逆走を混ぜる |
+| 再生成 | 実行中に `Regenerate()` で作り直し可能 |
 
-- `PopulationFlowManager.cs`
-  - ライン列・人数・通行方向・停止/逆走の割合など、歩行者流の生成/再生成を管理
-- `PedestrianController.cs`
-  - NavMeshAgentを用いた歩行者の移動・速度の制御
-- `LineObject.cs`
-  - Start/Intermediate/Goalの各ラインを表し、生成範囲と経路を定義
+## 主要コンポーネント
 
+（`Assets/Scripts` 直下）
+
+| ファイル | 役割 |
+| --- | --- |
+| `PopulationFlowManager.cs` | ライン列・人数・通行方向・停止/逆走の割合など、歩行者流の生成/再生成を管理 |
+| `PedestrianController.cs` | `NavMeshAgent` を用いた歩行者の移動・速度の制御 |
+| `LineObject.cs` | Start/Intermediate/Goal の各ラインを表し、生成範囲と経路を定義 |
 
 ## クイックスタート
 
-1. **ラインを配置**
-   - ここで言う「ライン」とは以下をアタッチしたCubeオブジェクトです
-     - `LineObject.cs`
-     - `Box Collider(Is Trigger)`
-   - スタート/ゴールを各1つ、中間ラインを2つ以上
-   - 並び順は「スタートライン → 中間ライン（複数） → ゴールライン」
-   - ※ 中間ラインが2つ未満だと歩行者は生成されません
-2. **歩行者Prefabを準備**
-   - 以下をアタッチ
-     - `PedestrianController.cs`
-     - `NavMeshAgent`
-     - `Rigidbody`
-     - `Collider`
-   - `PedestrianController.cs`の以下のパラメータを設定
-     - `minSpeed`：最小速度
-     - `maxSpeed`：最大速度
-     - ※ 速度は上記で指定された範囲でランダムに設定されます
-3. **歩行者流マネージャを設定**
-   - Empty Objectに `PopulationFlowManager.cs` をアタッチ
-   - Inspectorで設定するパラメータ
-     - `IsLeftSideTraffic`：左側通行かどうか（false：右側通行）
-     - `frontierStart`, `frontierGoal`：両端のライン(スタート・ゴールライン)
-     - `intermediateLines`：中間ラインのリスト（2つ以上）
-       - ※ スタートライン側 -> ゴールライン側 の順でリストに登録してください
-     - `pedestrianPrefab`：歩行者Prefab
-     - `S2GPedestrianCount` / `G2SPedestrianCount`：各方向の生成人数
-     - `ratioStationary`：停止者の生成確率（%）
-     - `ratioReversing`：逆走者の生成確率（%）
-4. **NavMeshをベイク**
-5. **再生すると歩行者流が生成される**
-6. **再生成したい場合は`PopulationFlowManager.Regenerate()`を実行**
-   - エディター上では、インスペクターのコンテキストメニューから実行可能。
+### 1) ラインを配置
 
+ここで言う「ライン」とは、Cube（など）に以下をアタッチしたオブジェクトです。
 
-## 仕様・注意
+- `LineObject.cs`
+- `Box Collider`（`Is Trigger = True`）
 
-- 生成位置：両端（Start/Goal を含む）セグメントには歩行者は生成されません。（そのため中間ラインは2つ以上が必須です）
-- 想定：平坦な地形
+配置ルール:
 
+- スタート/ゴールを各 1 つ
+- 中間ライン（Intermediate）を **2つ以上**
+- 並び順は **Start → Intermediate（複数） → Goal**
+
+例:
+
+```
+[Start] -> [Inter1] -> [Inter2] -> [Goal]
+```
+
+### 2) 歩行者 Prefab を準備
+
+Prefab（歩行者）に以下をアタッチします。
+
+| 必須コンポーネント | 用途 |
+| --- | --- |
+| `PedestrianController.cs` | 速度などの制御 |
+| `NavMeshAgent` | NavMesh 上の移動 |
+| `Rigidbody` | 物理（プロジェクトの方針に合わせて設定） |
+| `Collider` | 衝突判定 |
+
+`PedestrianController.cs` のパラメータ:
+
+| 項目 | 意味 | 備考 |
+| --- | --- | --- |
+| `minSpeed` | 最小速度 | 速度は範囲内でランダムに決定 |
+| `maxSpeed` | 最大速度 | `minSpeed <= maxSpeed` を推奨 |
+
+### 3) 歩行者流マネージャを設定
+
+Empty Object に `PopulationFlowManager.cs` をアタッチし、Inspector で値を設定します。
+
+### 4) NavMesh をベイク
+
+歩行者が移動する床/地形が NavMesh に含まれるようにベイクします。
+
+### 5) 再生して生成を確認
+
+Playすると歩行者流が生成されます。
+
+### 6) 再生成（任意）
+
+再生成したい場合は `PopulationFlowManager.Regenerate()` を実行します。
+
+- Editor 上では、インスペクターのコンテキストメニューから実行できます。
+
+## 設定項目（Inspector）
+
+### PopulationFlowManager
+
+| 項目 | 種別 | 説明 | 重要ポイント |
+| --- | --- | --- | --- |
+| `IsLeftSideTraffic` | bool | 左側通行かどうか（false：右側通行） | 通行方向のルール切替 |
+| `terminalStart` | LineObject | スタート側の端ライン | Start/Goal は「端」 |
+| `terminalGoal` | LineObject | ゴール側の端ライン | 端セグメントには生成されません（後述） |
+| `intermediateLines` | List<LineObject> | 中間ラインのリスト | **2つ以上必須** / Start→Goal 順で登録 |
+| `pedestrianPrefab` | GameObject | 歩行者 Prefab | `NavMeshAgent` 等が必要 |
+| `S2GPedestrianCount` | int | Start→Goal の生成人数 | 方向別に指定 |
+| `G2SPedestrianCount` | int | Goal→Start の生成人数 | 方向別に指定 |
+| `ratioStationary` | float/int | 停止者の生成確率（%） | 0〜100 を想定 |
+| `ratioReversing` | float/int | 逆走者の生成確率（%） | 0〜100 を想定 |
+
+### PedestrianController
+
+| 項目 | 説明 |
+| --- | --- |
+| `minSpeed` / `maxSpeed` | 移動速度のランダム範囲 |
+
+## 仕様・注意点
+
+| 項目 | 内容 |
+| --- | --- |
+| 生成位置 | 両端（Start/Goal を含む）セグメントには歩行者は生成されません。よって中間ラインは 2つ以上必須です。 |
+| 想定環境 | 平坦な地形を想定（複雑な高低差は未検証） |
+| 事前条件 | NavMesh がベイクされていないと歩行者が移動しません |
 
 ## ML-Agents との連携
 
-毎エピソード開始時にパラメータランダム化→再生成する事で強化学習で動的に利用可能。
+毎エピソード開始時に「パラメータをランダム化 → 再生成」を行うことで、強化学習で動的に利用できます。
 
-歩行者流の再生成:
+### 歩行者流の再生成
+
 ```csharp
 public PopulationFlowManager manager;
+
 public override void OnEpisodeBegin()
 {
   manager.Regenerate();
 }
-...
 ```
 
-パラメータのランダム化例:
+### パラメータのランダム化例
+
 ```csharp
 manager.S2GPedestrianCount = (int)Random.Range(5, 15);
 manager.G2SPedestrianCount = (int)Random.Range(5, 15);
