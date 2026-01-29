@@ -12,9 +12,9 @@ public class PedestrianController : MonoBehaviour
     #region Fields
     // 外部参照
     // - PopulationFlowManager: 左右通行設定などの共有コンフィグ
-    // - frontierStart/frontierGoal: 経路の始端・終端ライン
+    // - terminalStart/terminalGoal: 経路の始端・終端ライン
     [HideInInspector] public PopulationFlowManager populationFlowManager;
-    [HideInInspector] public LineObject frontierStart, frontierGoal;
+    [HideInInspector] public LineObject terminalStart, terminalGoal;
     /// <summary>
     /// 中間ライン配列（Start → mid[0] → mid[1] → ... → Goal の順序）
     /// </summary>
@@ -72,7 +72,7 @@ public class PedestrianController : MonoBehaviour
     // 歩行者の初期位置と方向を設定
     public void InitializePosition(bool isLeftSideTraffic)
     {
-        if (frontierStart == null || frontierGoal == null) return;
+        if (terminalStart == null || terminalGoal == null) return;
 
         // 中間ライン追跡状態をリセット
     currentSegmentIndex = 0;
@@ -109,11 +109,11 @@ public class PedestrianController : MonoBehaviour
 
         // 最終目的地到達チェック
         bool shouldReset = false;
-        if (isS2G && frontierGoal != null && other.gameObject == frontierGoal.gameObject)
+        if (isS2G && terminalGoal != null && other.gameObject == terminalGoal.gameObject)
         {
             shouldReset = true;
         }
-        else if (!isS2G && frontierStart != null && other.gameObject == frontierStart.gameObject)
+        else if (!isS2G && terminalStart != null && other.gameObject == terminalStart.gameObject)
         {
             shouldReset = true;
         }
@@ -158,7 +158,7 @@ public class PedestrianController : MonoBehaviour
     // 目的地を超えたら位置をリセットして再度歩行開始（循環）
     private void ResetPosition()
     {
-        if (frontierStart == null || frontierGoal == null || !navMeshAgent.isOnNavMesh) return;
+        if (terminalStart == null || terminalGoal == null || !navMeshAgent.isOnNavMesh) return;
 
         // サイクル用ライン列を再構築（初期生成時と同等に固定化）
         orderedLines = GetAllLinesOrdered(isS2G);
@@ -179,7 +179,7 @@ public class PedestrianController : MonoBehaviour
     // 目的地を設定：現在位置の対応点を次ターゲットライン上に求め、NavMeshAgentへ指示
     private void SetDestination()
     {
-        if (frontierStart == null || frontierGoal == null) return;
+        if (terminalStart == null || terminalGoal == null) return;
         if (isStationaryPedestrian) return; // 停止者は目的地設定不要
 
         // サイクルで保持している横割合で次ターゲットライン上の目的地を決定
@@ -258,17 +258,17 @@ public class PedestrianController : MonoBehaviour
         // Reset時のソース/ターゲットは経路の先頭側
         if (isS2G)
         {
-            sourceLine = frontierStart;
+            sourceLine = terminalStart;
             targetLine = (intermediateLines != null && intermediateLines.Count > 0)
                 ? intermediateLines[0]
-                : frontierGoal;
+                : terminalGoal;
         }
         else
         {
-            sourceLine = frontierGoal;
+            sourceLine = terminalGoal;
             targetLine = (intermediateLines != null && intermediateLines.Count > 0)
                 ? intermediateLines[intermediateLines.Count - 1]
-                : frontierStart;
+                : terminalStart;
         }
 
         // 進行方向に対する左右とラインの Left/Right の関係から横割合を決定
@@ -285,12 +285,12 @@ public class PedestrianController : MonoBehaviour
     /// </summary>
     private List<LineObject> GetAllLinesOrdered(bool s2g)
     {
-        var list = new List<LineObject> { frontierStart };
+        var list = new List<LineObject> { terminalStart };
         if (intermediateLines != null)
         {
             list.AddRange(intermediateLines);
         }
-        list.Add(frontierGoal);
+        list.Add(terminalGoal);
 
         // G2S の場合は反転
         if (!s2g)

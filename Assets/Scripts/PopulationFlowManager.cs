@@ -4,15 +4,12 @@ public class PopulationFlowManager : MonoBehaviour
 {
     #region 設定
 
-    [Header("Flow Direction")]
-    [Tooltip("歩行者の流れ方向（左側通行かどうか）")]
-    public bool IsLeftSideTraffic = false;
-
     [Header("歩行者の生成範囲")]
+    [Header("Terminal Lines")]
     [Tooltip("歩行者の生成範囲のスタートライン")]
-    [SerializeField] private LineObject frontierStart;
+    [SerializeField] private LineObject terminalStart;
     [Tooltip("歩行者の生成範囲のゴールライン")]
-    [SerializeField] private LineObject frontierGoal;
+    [SerializeField] private LineObject terminalGoal;
     
     /// <summary>
     /// 中間ライン配列（Start → mid[0] → mid[1] → ... → Goal の順序で通過）
@@ -20,6 +17,10 @@ public class PopulationFlowManager : MonoBehaviour
     [Header("Intermediate Lines")]
     [Tooltip("中間ライン配列（Start→Goal順で配置）")]
     [SerializeField] private List<LineObject> intermediateLines = new List<LineObject>();
+
+    [Header("Flow Direction")]
+    [Tooltip("歩行者の流れ方向（左側通行かどうか）")]
+    public bool IsLeftSideTraffic = false;
 
     [Header("Pedestrian Prefab")]
     [Tooltip("歩行者のPrefab")]
@@ -107,8 +108,8 @@ public class PopulationFlowManager : MonoBehaviour
     private void SetupPedestrianController(PedestrianController controller, bool isS2G)
     {
         controller.populationFlowManager = this;
-        controller.frontierStart = frontierStart;
-        controller.frontierGoal = frontierGoal;
+        controller.terminalStart = terminalStart;
+        controller.terminalGoal = terminalGoal;
         controller.intermediateLines = intermediateLines;
         controller.isS2G = isS2G;
     }
@@ -205,11 +206,11 @@ public class PopulationFlowManager : MonoBehaviour
         if (Application.isPlaying) return;
 
         // スタートラインとゴールラインが設定されていない場合は何もしない
-        if (frontierStart == null || frontierGoal == null) return;
+        if (terminalStart == null || terminalGoal == null) return;
 
         // エディタでリアルタイム更新（再生中以外）
-        frontierStart.CalculateEndpoints();
-        frontierGoal.CalculateEndpoints();
+        terminalStart.CalculateEndpoints();
+        terminalGoal.CalculateEndpoints();
 
         // 中間ラインもエディタで更新
         if (intermediateLines != null)
@@ -231,12 +232,12 @@ public class PopulationFlowManager : MonoBehaviour
     private void DrawUnifiedPathLines()
     {
         // 全ライン（スタート + 中間 + ゴール）を順序通りに取得
-        List<LineObject> allLines = new List<LineObject> { frontierStart };
+        List<LineObject> allLines = new List<LineObject> { terminalStart };
         if (intermediateLines != null)
         {
             allLines.AddRange(intermediateLines);
         }
-        allLines.Add(frontierGoal);
+        allLines.Add(terminalGoal);
 
         // 無効なラインを除外
         allLines.RemoveAll(line => line == null);
