@@ -1,25 +1,12 @@
 # PopulationFlowMaker
 
-Unityで（右側通行・左側通行等の）歩行者流を生成する簡易ツールです。強化学習（ML-Agents）などで「毎エピソード歩行者流を用意したい」用途を想定しています。
+Unityで（右側通行・左側通行等の）歩行者流を生成する簡易ツールです。強化学習（ML-Agents）などで「毎エピソード動的な歩行者流を用意したい」用途を想定しています。
 
 
 <p align="center">
   <img src="image/image.png" alt="demo1" />
 </p>
 
-<p align="center">
-  <img src="image/image2.png" alt="demo2" />
-</p>
-
-## 目次
-
-- [開発環境](#開発環境)
-- [できること](#できること)
-- [主要コンポーネント](#主要コンポーネント)
-- [クイックスタート](#クイックスタート)
-- [設定項目（Inspector）](#設定項目inspector)
-- [仕様・注意点](#仕様注意点)
-- [ML-Agents との連携](#ml-agents-との連携)
 
 ## 開発環境
 
