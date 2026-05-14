@@ -3,8 +3,8 @@
 Unityで（右側通行・左側通行等の）歩行者流を生成する簡易ツールです。強化学習（ML-Agents）などで「毎エピソード動的な歩行者流を用意したい」用途を想定しています。
 
 
-<p align="center">
-  <img src="image/image.png" alt="demo1" />
+<p>
+  <img src="image/image.png" alt="demo1" style="width: 100%; height: auto; display: block;" />
 </p>
 
 
