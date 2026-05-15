@@ -24,15 +24,6 @@ Unityで（右側通行・左側通行等の）歩行者流を生成する簡易
 | 歩行者の身長のランダム化 | `MinHeightScale`〜`MaxHeightScale` の範囲で生成時にスケールをランダム化 |
 | 再生成 | 実行中に `Regenerate()` で作り直し可能 |
 
-## 主要コンポーネント
-
-（`Assets/Scripts` 直下）
-
-| ファイル | 役割 |
-| --- | --- |
-| `PopulationFlowManager.cs` | ライン列・人数・通行方向・停止/逆走の割合など、歩行者流の生成/再生成を管理 |
-| `PedestrianController.cs` | `NavMeshAgent` を用いた歩行者の移動・速度の制御 |
-| `LineObject.cs` | Start/Intermediate/Goal の各ラインを表し、生成範囲と経路を定義 |
 
 ## クイックスタート
 
